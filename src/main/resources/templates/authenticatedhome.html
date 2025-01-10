@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/CSS/home.css">
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    
+</head>
+<body>
+    <div class="nav">
+        <img src="images/logo.png">
+        <div class="navitems">
+            <li id="logo"></li>
+            <li>Home</li>
+            <li>Doctors</li>
+            <li>Appointments</li>
+            <li><a href="/hospital_list">Hospitals</a></li>
+           <li>Sign out</li>
+           <li><p id="username">loading..</p></li>
+
+        </div>
+    </div>
+    <div class="main">
+        
+        <div class="home">
+            <div class="text-content">
+                <h1 id="heading">"Doctorly: Seamless Appointments, Health at Your Fingertips."</h1>
+                <button id="appointment-book" class="book-appointment-btn">Book an Appointment</button>
+                <button id="online-cons" class="book-appointment-btn">Online Dr. Consultation</button>
+            </div>
+            <span class="image-container">
+                <div class="inner-image"></div>
+            </span>
+        </div>
+    </div>
+    <div class="main2">
+        <div class="video">
+            <video 
+              height="480" width="250"   autoplay loop muted>
+              <source src="https://www.practostatic.com/web-assets/home/assets/videos/appointment.700ce682eaec91bf93b6574cb8f09cd0.webm"
+              type="video/webm">
+            </video>
+        </div>
+        <div class="text-content">
+            <h4 class="head" id="head">Instant appointment with doctors.<b>Guranteed</b> </h4>
+            <h2 id="desc">✓ 100,000 Verified doctors
+            </h2>
+            <h2 id="desc">✓ 3M+ Patient recommendations</h2>
+            <h2 id="desc">✓ 25M Patients/year</h2>
+
+            <button id="online-cons" class="book-appointment-btn">Find me the right doctor</button>
+        </div>
+    </div>
+    <div class="main3">
+        <div class="text-content2">
+            <h4 class="head" id="head">Skip the waiting room.<b>Consult with a doctor</b> </h4>
+            <h2 id="desc">✓ Fees starting at 99
+            </h2>
+            <h2 id="desc">✓ Verified doctors respond in 5 minutes</h2>
+            <h2 id="desc">✓ 100% private and confidential</h2>
+
+            <button id="online-cons" class="book-appointment-btn">Consult now</button>
+        </div>
+        <div class="video2">
+            <video 
+              height="480" width="250"  loading="false" autoplay loop muted>
+              <source src="//www.practostatic.com/web-assets/home/assets/videos/consult.099446892618434cc8a038d7844c4380.webm"
+              type="video/webm">
+            </video>
+        </div>
+    </div>
+    <div class="footer">
+        <h3>HOSPITALS REGISTRATION</h3>
+        <a href="/hospitals/register">Click to register your hospital</a>
+    </div>
+    <Script src="/JS/script1.js"></Script>
+</body>
+</html>

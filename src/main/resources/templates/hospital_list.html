@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Listing</title>
+    <link rel="stylesheet" href="/CSS/hospital_page_style.css">
+    <style>
+        /* Basic styles for the popup form */
+        #popup-form {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        #popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The Hospital Listing</h1>
+    </header>
+    <main class="hospital-list" id="hospital-list">
+        <!-- Hospital cards will be inserted here dynamically -->
+    </main>
+
+    <!-- Popup overlay and form -->
+    <div id="popup-overlay"></div>
+    <div id="popup-form">
+        <h2>Book Appointment</h2>
+        <form id="appointment-form">
+            <label for="patient-name">Patient Name:</label>
+            <input type="text" id="patient-name" name="patientName" required>
+
+            <label for="doctor-name">Select Doctor:</label>
+            <select id="doctor-name" name="doctorName" required>
+                <!-- Options will be populated dynamically -->
+            </select>
+
+            <label for="hospital-name">Hospital Name:</label>
+            <input type="text" id="hospital-name" name="hospitalName" readonly>
+
+            <button type="submit">Book Appointment</button>
+        </form>
+    </div>
+
+    <script>
+        // Fetch hospital data from the backend API
+        fetch('http://localhost:8081/hospital/getall')
+            .then(response => response.json())
+            .then(data => {
+                const hospitalList = document.getElementById('hospital-list');
+                data.forEach(hospital => {
+                    const imageUrl = 'https://source.unsplash.com/500x300/?hospital,healthcare';
+
+                    const hospitalCard = `
+                        <div class="hospital-card">
+                            <img src="${imageUrl}" >
+                            <h2>${hospital.hospitalName}</h2>
+                            <p><strong>City:</strong> ${hospital.city}</p>
+                            <p><strong>Emergency Hotline:</strong> ${hospital.emergencyHotline}</p>
+                            <p><strong>Contact Number:</strong> ${hospital.hospitalNumber}</p>
+                            <p><strong>Operation Hours:</strong> ${hospital.operatingHours}</p>
+                            <button class="book-appointment-button" data-hospital-name="${hospital.hospitalName}">Book Appointment</button>
+                        </div>
+                    `;
+                    hospitalList.insertAdjacentHTML('beforeend', hospitalCard);
+                });
+
+                // Add event listeners to all "Book Appointment" buttons
+                document.querySelectorAll('.book-appointment-button').forEach(button => {
+                    button.addEventListener('click', event => {
+                        const hospitalName = event.target.getAttribute('data-hospital-name');
+                        document.getElementById('hospital-name').value = hospitalName;
+                        fetchDoctors(); // Fetch and populate doctors list
+                        showPopupForm();
+                    });
+                });
+            })
+            .catch(error => console.error('Error fetching hospital data:', error));
+
+        // Function to fetch and populate doctors in the select dropdown
+        function fetchDoctors() {
+            fetch('http://localhost:8081/hospital/getalldoctors')
+                .then(response => response.json())
+                .then(data => {
+                    const doctorSelect = document.getElementById('doctor-name');
+                    doctorSelect.innerHTML = ''; // Clear existing options
+                    data.forEach(doctor => {
+                        const option = document.createElement('option');
+                        option.value = doctor.doctorName;
+                        option.textContent = doctor.doctorName;
+                        doctorSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching doctors:', error));
+        }
+
+        // Function to show the popup form
+        function showPopupForm() {
+            document.getElementById('popup-overlay').style.display = 'block';
+            document.getElementById('popup-form').style.display = 'block';
+        }
+
+        // Function to hide the popup form
+        function hidePopupForm() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('popup-form').style.display = 'none';
+        }
+
+        // Event listener for the popup overlay to close the form
+        document.getElementById('popup-overlay').addEventListener('click', hidePopupForm);
+
+        // Handle form submission
+        document.getElementById('appointment-form').addEventListener('submit', event => {
+            event.preventDefault(); // Prevent default form submission
+
+            // Collect form data
+            const patientName = document.getElementById('patient-name').value;
+            const doctorName = document.getElementById('doctor-name').value;
+            const hospitalName = document.getElementById('hospital-name').value;
+
+            const appointmentData = {
+                patientName: patientName,
+                doctorName: doctorName,
+                hospitalName: hospitalName
+            };
+
+            // Send POST request to book appointment
+            fetch('http://localhost:8081/hospital/bookappointment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(appointmentData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Appointment booked successfully');
+                hidePopupForm();
+                location.reload(); // Reload the page
+            })
+            .catch(error => {
+                console.error('Error booking appointment:', error);
+                alert('Failed to book appointment');
+            });
+        });
+    </script>
+</body>
+</html>
